@@ -7,6 +7,7 @@ String publishTopic    = "/feeds/touch";
 String subscribeTopic    = "/feeds/motor";
 
 PFont font;
+PShape figure1, figure2;
 
 int shoulderX = 50;
 int shoulderY = 50;
@@ -22,9 +23,15 @@ int hipTime = 0;
 
 void setup()
 {
-  size(550, 300);
+  // setup window and font
+  size(850, 700);
+  noStroke();
   font = createFont("Avenir-Book-48.vlw", 32);
   textFont(font);
+  
+  // load image
+  figure1 = loadShape("dancer1.svg");
+  figure2 = loadShape("dancer2.svg");
   
   // create client
   myClient = new MQTTClient(this);
@@ -37,10 +44,20 @@ void setup()
 }
 
 void draw() {
-  background(255);
+  background(#BEEE62);
+  
+  // left dancer
+  fill(#3C6E71);
+  rect(0, 120, width*.45, 400);
+  shape(figure1, 30, 65, figure1.width*1.25, figure1.height*1.25);
+  
+    // right dancer
+  fill(#70AE6E);
+  rect(width*.55, 120, width*.45, 400);
+  shape(figure2, width-figure2.width-65, 65, figure2.width*1.25, figure2.height*1.25);
 
   // if shoulder touched
-  if (shoulderTouched) {
+  /*if (shoulderTouched) {
     // white square
     fill(255);
   } else {
@@ -49,10 +66,10 @@ void draw() {
   }
   rect(shoulderX, shoulderY, squareSize, squareSize);
   fill(20);
-  text("shoulder", 80, 150);
+  text("shoulder", 80, 150);*/
 
   // if hip touched 
-  if ( hipTouched) {
+  /*if ( hipTouched) {
     // white square
     fill(255);
   } else {
@@ -61,9 +78,16 @@ void draw() {
   }
   rect(hipX, hipY, squareSize, squareSize);
   fill(50);
-  text("hip", 370, 150);
+  text("hip", 370, 150);*/
 
   updateTouchedFlags();
+  
+  
+  // bottom banner
+  fill(#483C46);
+   rect(width*0.25, height-100, width*0.75, 50); 
+   fill(#BEEE62);
+   text("hacking the body", width*0.25+10, height-64);
 }
 
 void keyPressed() {
