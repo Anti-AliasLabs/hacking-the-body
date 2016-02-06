@@ -27,3 +27,8 @@ Wearable technology project for live-coding choreography
 ![image](./docs/images/dhcp.tiff)
 
 5. Click 'Apply' and close Network Preferences.
+
+###Starting the Software
+1. Start the mosquitto broker. For an install on a Mac using homebrew, type the following in the terminal (without the quotes) '/usr/local/sbin/mosquitto'.
+2. Open the Processing sketch in Processing.
+3. Start running the Processing sketch. Check that there were no errors in connecting to the broker in the Processing console.
