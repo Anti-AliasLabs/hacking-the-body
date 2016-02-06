@@ -18,13 +18,13 @@ Wearable technology project for live-coding choreography
 
 1. If this is the first time connecting to the router, set up a static IP address for this network. On a Mac, go to Network Preferences.
 2. Click on the '+' to add a new interface.
-![image](./docs/images/network-prefs.tiff)
+![image](./docs/images/network-prefs.png)
 
 3. Create a new interface using Wifi and give it a name then click 'create'.
-![image](./docs/images/new-interface.tiff)
+![image](./docs/images/new-interface.png)
 
 4. Click on 'Advanced...' and then the 'TCP/IP' tab. Select 'Using DHCP with manual address' from the 'Configure IPv4:' menu. Enter type 192.168.1.5 in the 'IPv4 Address:' text box. Click 'OK'. 
-![image](./docs/images/dhcp.tiff)
+![image](./docs/images/dhcp.png)
 
 5. Click 'Apply' and close Network Preferences.
 
