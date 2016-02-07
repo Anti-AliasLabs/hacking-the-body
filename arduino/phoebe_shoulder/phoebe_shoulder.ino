@@ -39,10 +39,6 @@
 #define AIO_USERNAME    ""
 #define AIO_KEY         ""
 
-/************************* Dancer and Body Location **************************/
-#define SENSOR_FEED     "/htb/tara/shoulder"
-#define ACTUATOR_FEED   "/htb/actuator/tara/shoulder/"
-
 
 /************ Global State (you don't need to change this!) ******************/
 
@@ -62,11 +58,11 @@ Adafruit_MQTT_Client mqtt(&client, MQTT_SERVER, AIO_SERVERPORT, MQTT_USERNAME, M
 
 // Setup a feed called 'touch' for publishing.
 // Notice MQTT paths: <username>/feeds/<feedname>
-const char TOUCH_FEED[] PROGMEM = AIO_USERNAME "/htb/sensor/tara/shoulder/";
+const char TOUCH_FEED[] PROGMEM = AIO_USERNAME "/htb/sensor/phoebe/shoulder/";
 Adafruit_MQTT_Publish touch = Adafruit_MQTT_Publish(&mqtt, TOUCH_FEED);
 
 // Setup a feed called 'motor' for subscribing to changes.
-const char MOTOR_FEED[] PROGMEM = AIO_USERNAME "/htb/actuator/tara/shoulder/";
+const char MOTOR_FEED[] PROGMEM = AIO_USERNAME "/htb/actuator/phoebe/shoulder/";
 Adafruit_MQTT_Subscribe motor = Adafruit_MQTT_Subscribe(&mqtt, MOTOR_FEED);
 
 /*************************** Cap Sensing ************************************/
