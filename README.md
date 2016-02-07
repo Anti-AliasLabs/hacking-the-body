@@ -1,6 +1,9 @@
 # hacking-the-body
-Wearable technology project for live-coding choreography
+Wearable technology project for live-coding choreography. 
 
+Dancers wear ESP8266 wifi-enabled microcontrollers that generate MQTT messages when capacitive touch sensors are triggered (sensed via a MPR121). The microcontrollers also listen to MQTT messages to trigger haptic feedback motors.
+
+##Installation and Set Up
 
 ###Dependencies
 
@@ -8,6 +11,8 @@ Wearable technology project for live-coding choreography
 * [Processing](https://processing.org/) (v3.0.1)
 * [MQTT for Processing](https://github.com/256dpi/processing-mqtt) (v1.6.0)
 * [ControlP5 for Processing](http://www.sojamo.de/libraries/controlP5/) (v.2.2.5)
+* [ESP8266 Support for Arduino IDE]() (v)
+* [Adafruit MQTT Library for Arduino]() (v)
 
 ###Setting Up the System
 
@@ -32,3 +37,21 @@ Wearable technology project for live-coding choreography
 1. Start the mosquitto broker. For an install on a Mac using homebrew, type the following in the terminal (without the quotes) '/usr/local/sbin/mosquitto'.
 2. Open the Processing sketch in Processing.
 3. Start running the Processing sketch. Check that there were no errors in connecting to the broker in the Processing console.
+
+##Messaging Structure
+Each dancer (Tara and Phoebe) wears two ESP8266 wifi-enabled microntrollers, one on the shoulder and one on the hip. Each microcontroller is connected to one capacitive sensing chip connected to a fabric-based sensor. 
+
+The shoulder microcontroller controls a motor referred to as the tickle motor.
+
+The hip microcontroller controls two vibration motors.
+
+###MQTT Feeds
+###Topics
+/htb/[sensor, actuator]/[tara, phoebe]/[hip, shoulder]/
+
+* /htb/sensor/tara/hip/
+* /htb/actuator/phoebe/shoulder/tickle
+* /htb/actuator/phoebe/hip/1
+
+
+
