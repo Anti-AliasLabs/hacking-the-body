@@ -2,9 +2,14 @@ import mqtt.*;
 import controlP5.*;
 import java.util.*;
 
+
 MQTTClient myClient;
 ControlP5 cp5;
-RadioButton tickle1, tickle2, hipLeft1, hipLeft2, hipRight1, hipRight2;
+RadioButton scene;
+Chimes myChimes;
+
+import ddf.minim.*;
+Minim minim;
 
 // variables for MQTT
 String broker   = "tcp://localhost:1883";
@@ -42,127 +47,27 @@ void setup()
   figure1 = loadShape("dancer1.svg");
   figure2 = loadShape("dancer2.svg");
 
+  //------------audio playback-----------------
+  minim = new Minim(this);
+  myChimes = new Chimes(minim);
+
   //------------radio buttons-----------------
   cp5 = new ControlP5(this);
-  // tickle1
-  tickle1 = cp5.addRadioButton("tickle1")
-    .setPosition(100, 150)
+  // scene
+  scene = cp5.addRadioButton("scene")
+    .setPosition(300, 50)
     .setSize(20, 20)
     .setColorForeground(color(120))
     .setColorActive(color(255))
-    .setColorLabel(color(255))
+    .setColorLabel(color(50))
     .setItemsPerRow(5)
     .setSpacingColumn(50)
-    .addItem("hip", 1)
-    .addItem("shoulder", 2)
+    .addItem("scene 1", 1)
+    .addItem("scene 2", 2)
+    .addItem("scene 3", 3)
     ;
 
-  for (Toggle t : tickle1.getItems()) {
-    t.getCaptionLabel().setColorBackground(color(255, 80));
-    t.getCaptionLabel().getStyle().moveMargin(-7, 0, 0, -3);
-    t.getCaptionLabel().getStyle().movePadding(7, 0, 0, 3);
-    t.getCaptionLabel().getStyle().backgroundWidth = 45;
-    t.getCaptionLabel().getStyle().backgroundHeight = 13;
-  }
-
-  // tickle2
-  tickle2 = cp5.addRadioButton("tickle2")
-    .setPosition(600, 150)
-    .setSize(20, 20)
-    .setColorForeground(color(120))
-    .setColorActive(color(255))
-    .setColorLabel(color(255))
-    .setItemsPerRow(5)
-    .setSpacingColumn(50)
-    .addItem("hip ", 1)
-    .addItem("shoulder ", 2)
-    ;
-
-  for (Toggle t : tickle2.getItems()) {
-    t.getCaptionLabel().setColorBackground(color(255, 80));
-    t.getCaptionLabel().getStyle().moveMargin(-7, 0, 0, -3);
-    t.getCaptionLabel().getStyle().movePadding(7, 0, 0, 3);
-    t.getCaptionLabel().getStyle().backgroundWidth = 45;
-    t.getCaptionLabel().getStyle().backgroundHeight = 13;
-  }
-
-  // hipLeft1
-  hipLeft1 = cp5.addRadioButton("hipLeft1")
-    .setPosition(160, 260)
-    .setSize(20, 20)
-    .setColorForeground(color(120))
-    .setColorActive(color(255))
-    .setColorLabel(color(255))
-    .setItemsPerRow(5)
-    .setSpacingColumn(50)
-    .addItem("hip  ", 1)
-    .addItem("shoulder  ", 2)
-    ;
-
-  for (Toggle t : hipLeft1.getItems()) {
-    t.getCaptionLabel().setColorBackground(color(255, 80));
-    t.getCaptionLabel().getStyle().moveMargin(-7, 0, 0, -3);
-    t.getCaptionLabel().getStyle().movePadding(7, 0, 0, 3);
-    t.getCaptionLabel().getStyle().backgroundWidth = 45;
-    t.getCaptionLabel().getStyle().backgroundHeight = 13;
-  }
-
-  // hipLeft2
-  hipLeft2 = cp5.addRadioButton("hipLeft2")
-    .setPosition(680, 290)
-    .setSize(20, 20)
-    .setColorForeground(color(120))
-    .setColorActive(color(255))
-    .setColorLabel(color(255))
-    .setItemsPerRow(5)
-    .setSpacingColumn(50)
-    .addItem("hip   ", 1)
-    .addItem("shoulder   ", 2)
-    ;
-
-  for (Toggle t : hipLeft2.getItems()) {
-    t.getCaptionLabel().setColorBackground(color(255, 80));
-    t.getCaptionLabel().getStyle().moveMargin(-7, 0, 0, -3);
-    t.getCaptionLabel().getStyle().movePadding(7, 0, 0, 3);
-    t.getCaptionLabel().getStyle().backgroundWidth = 45;
-    t.getCaptionLabel().getStyle().backgroundHeight = 13;
-  }
-
-  // hipRight1
-  hipRight1 = cp5.addRadioButton("hipRight1")
-    .setPosition(30, 290)
-    .setSize(20, 20)
-    .setColorForeground(color(120))
-    .setColorActive(color(255))
-    .setColorLabel(color(255))
-    .setItemsPerRow(5)
-    .setSpacingColumn(50)
-    .addItem("hip    ", 1)
-    .addItem("shoulder    ", 2)
-    ;
-
-  for (Toggle t : hipRight1.getItems()) {
-    t.getCaptionLabel().setColorBackground(color(255, 80));
-    t.getCaptionLabel().getStyle().moveMargin(-7, 0, 0, -3);
-    t.getCaptionLabel().getStyle().movePadding(7, 0, 0, 3);
-    t.getCaptionLabel().getStyle().backgroundWidth = 45;
-    t.getCaptionLabel().getStyle().backgroundHeight = 13;
-  }
-
-  // hipRight2
-  hipRight2 = cp5.addRadioButton("hipRight2")
-    .setPosition(540, 260)
-    .setSize(20, 20)
-    .setColorForeground(color(120))
-    .setColorActive(color(255))
-    .setColorLabel(color(255))
-    .setItemsPerRow(5)
-    .setSpacingColumn(50)
-    .addItem("hip     ", 1)
-    .addItem("shoulder     ", 2)
-    ;
-
-  for (Toggle t : hipRight2.getItems()) {
+  for (Toggle t : scene.getItems()) {
     t.getCaptionLabel().setColorBackground(color(255, 80));
     t.getCaptionLabel().getStyle().moveMargin(-7, 0, 0, -3);
     t.getCaptionLabel().getStyle().movePadding(7, 0, 0, 3);
@@ -193,14 +98,32 @@ void draw() {
   rect(0, 120, width*.45, 400);
   shape(figure1, 100, 65, figure1.width*1.25, figure1.height*1.25);
   fill(#BEEE62);
-  text("1", width*0.45-30, 510);
+  text("Tara", width*0.45-80, 510);
+
+  text("Q", width*0.17, 150); //tickle trigger
+
+  text("z", width*0.3, 170); // chime triggers
+  text("x", width*0.31, 200);
+  text("c", width*0.32, 230);
+  text("v", width*0.33, 260);
+  text("b", width*0.34, 290);
+  text("n", width*0.35, 320);
+  text("m", width*0.36, 350);
 
   // right dancer
   fill(#70AE6E);
   rect(width*.55, 120, width*.45, 400);
   shape(figure2, width-figure2.width-135, 65, figure2.width*1.25, figure2.height*1.25);
   fill(#BEEE62);
-  text("2", width*0.55+10, 510);
+  text("Phoebe", width*0.55+10, 510);
+  text("P", width*0.80, 150); // tickle trigger
+
+  text("l", width*0.69, 170); // chime triggers
+  text("k", width*0.67, 200); 
+  text("j", width*0.65, 230); 
+  text("h", width*0.63, 260); 
+  text("g", width*0.61, 290); 
+
 
   // if shoulder touched
   /*if (shoulderTouched) {
@@ -240,17 +163,20 @@ void draw() {
 // controlEvent
 //--------------------------------------------------------
 void controlEvent(ControlEvent theEvent) {
-  //if (theEvent.isFrom(tickle1)) {
-  print("got an event from "+theEvent.getName()+": " + (int)theEvent.getValue() + " ");
-  switch ((int)theEvent.getValue()) {
-  case 1:
-    println("hip");
-    break;
-  case 2:
-    println("shoulder");
-    break;
+  if (theEvent.isFrom(scene)) {
+    println("got an event from "+theEvent.getName()+": " + (int)theEvent.getValue() + " ");
+    switch ((int)theEvent.getValue()) {
+    case 1:
+      myChimes.setScene(1);
+      break;
+    case 2:
+      myChimes.setScene(2);
+      break;
+    case 3:
+      myChimes.setScene(3);
+      break;
+    }
   }
-  //}
 }
 
 //--------------------------------------------------------
@@ -296,12 +222,54 @@ void updateTouchedFlags() {
 // keyPressed
 //--------------------------------------------------------
 void keyPressed() {
-  if (key=='z')
-    myClient.publish("/feeds/shoulder/motor", "buzz");
+  switch (key) {
+  case 'Q':
+    myClient.publish("/htb/actuator/tara/shoulder/", "tickle");
+    break;
 
-  if (key=='x') {
-    myClient.publish("/feeds/hip/motor", "buzz");
-    println("hip");
+  case 'P':
+    myClient.publish("/htb/actuator/phoebe/shoulder/", "tickle");
+    break;
+
+    // dancer 1
+  case 'z':
+    myChimes.playChime(0);
+    break;
+  case 'x':
+    myChimes.playChime(1);
+    break;
+  case 'c':
+    myChimes.playChime(2);
+    break;
+  case 'v':
+    myChimes.playChime(3);
+    break;
+  case 'b':
+    myChimes.playChime(4);
+    break;
+  case 'n':
+    myChimes.playChime(5);
+    break;
+  case 'm':
+    myChimes.playChime(6);
+    break;
+
+    // dancer 2 
+  case 'l':
+    myChimes.playChime(7);
+    break;
+  case 'k':
+    myChimes.playChime(8);
+    break;
+  case 'j':
+    myChimes.playChime(9);
+    break;
+  case 'h':
+    myChimes.playChime(10);
+    break;
+  case 'g':
+    myChimes.playChime(11);
+    break;
   }
 }
 
