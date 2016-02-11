@@ -13,8 +13,10 @@ Minim minim;
 
 // variables for MQTT
 String broker   = "tcp://localhost:1883";
-String publishTopic    = "/feeds/touch";
-String subscribeTopic    = "/feeds/motor";
+String publishTaraShoulder    = "/htb/actuator/tara/shoulder/";
+String publishPhoebeShoulder    = "/htb/actuator/phoebe/shoulder/";
+String subscribeTaraShoulder    = "/htb/sensor/tara/shoulder/";
+String subscribePhoebeShoulder    = "/htb/sensor/phoebe/shoulder/";
 
 // GUI variables
 PFont font;
@@ -84,7 +86,8 @@ void setup()
   myClient.connect(broker, "processing");
 
   // subscribe to feeds
-  myClient.subscribe("/example");
+  myClient.subscribe(subscribeTaraShoulder);
+  myClient.subscribe(subscribePhoebeShoulder);
 }
 
 //--------------------------------------------------------
@@ -186,26 +189,26 @@ void messageReceived(String topic, byte[] payload) {
   println("new message: " + topic + " - " + new String(payload));
 
   // phoebe shoulder touched
-  if (topic.equals("/htb/sensor/phoebe/shoulder/")) {
+  if (topic.equals(subscribePhoebeShoulder)) {
     println("phoebe shoulder sensor triggered");
     shoulderTouched = true;
     shoulderTime = millis();
     myChimes.playChime(1);
 
     // trigger the hip
-    myClient.publish("/htb/actuator/tara/shoulder", "from the shoulder");
+    myClient.publish(publishTaraShoulder, "from the shoulder");
     println("tara shoulder actuator triggered hip");
   }
 
   // tara shoulder touched
-  if (topic.equals("/htb/sensor/tara/shoulder/")) {
+  if (topic.equals(subscribeTaraShoulder)) {
     hipTouched = true;
     hipTime = millis();
     println("tara shoulder sensor triggered");
-    myChimes.playChime(11);
+    myChimes.playChime(5);
 
     // trigger the shoulder
-    myClient.publish("/htb/actuator/phoebe/shoulder/", "from hip");
+    myClient.publish(publishPhoebeShoulder, "from hip");
     println("phoebe shoulder actuator triggered");
   }
 }
@@ -228,11 +231,11 @@ void updateTouchedFlags() {
 void keyPressed() {
   switch (key) {
   case 'Q':
-    myClient.publish("/htb/actuator/tara/shoulder/", "tickle");
+    myClient.publish(publishTaraShoulder, "from the shoulder");
     break;
 
   case 'P':
-    myClient.publish("/htb/actuator/phoebe/shoulder/", "tickle");
+    myClient.publish(publishPhoebeShoulder, "from hip");
     break;
 
     // dancer 1
