@@ -185,24 +185,28 @@ void controlEvent(ControlEvent theEvent) {
 void messageReceived(String topic, byte[] payload) {
   println("new message: " + topic + " - " + new String(payload));
 
-  // shoulder touched
-  if (topic.equals("/feeds/shoulder/touch")) {
+  // phoebe shoulder touched
+  if (topic.equals("/htb/sensor/phoebe/shoulder/")) {
+    println("phoebe shoulder sensor triggered");
     shoulderTouched = true;
     shoulderTime = millis();
+    myChimes.playChime(1);
 
     // trigger the hip
-    myClient.publish("/feeds/hip/motor", "from the shoulder");
-    println("shoulder triggered hip");
+    myClient.publish("/htb/actuator/tara/shoulder", "from the shoulder");
+    println("tara shoulder actuator triggered hip");
   }
 
-  // hip touched
-  if (topic.equals("/feeds/hip/touch")) {
+  // tara shoulder touched
+  if (topic.equals("/htb/sensor/tara/shoulder/")) {
     hipTouched = true;
     hipTime = millis();
+    println("tara shoulder sensor triggered");
+    myChimes.playChime(11);
 
     // trigger the shoulder
-    myClient.publish("/feeds/shoulder/motor", "from hip");
-    println("hip triggered shoulder");
+    myClient.publish("/htb/actuator/phoebe/shoulder/", "from hip");
+    println("phoebe shoulder actuator triggered");
   }
 }
 
