@@ -11,8 +11,8 @@ Dancers wear ESP8266 wifi-enabled microcontrollers that generate MQTT messages w
 * [Processing](https://processing.org/) (v3.0.1)
 * [MQTT for Processing](https://github.com/256dpi/processing-mqtt) (v1.6.0)
 * [ControlP5 for Processing](http://www.sojamo.de/libraries/controlP5/) (v.2.2.5)
-* [ESP8266 Support for Arduino IDE]() (v)
-* [Adafruit MQTT Library for Arduino]() (v)
+* [ESP8266 Support for Arduino IDE](https://learn.adafruit.com/adafruit-huzzah-esp8266-breakout/using-arduino-ide) (v)
+* [Adafruit MQTT Library for Arduino](https://learn.adafruit.com/mqtt-adafruit-io-and-you/arduino-plus-library-setup) (v)
 
 ###Setting Up the System
 
