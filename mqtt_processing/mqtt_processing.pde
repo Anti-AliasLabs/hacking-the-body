@@ -5,7 +5,7 @@ import java.util.*;
 
 MQTTClient myClient;
 ControlP5 cp5;
-RadioButton scene;
+RadioButton sceneButton;
 Chimes myChimes;
 
 import ddf.minim.*;
@@ -21,6 +21,8 @@ String subscribePhoebeShoulder    = "/htb/sensor/phoebe/shoulder/";
 // GUI variables
 PFont font;
 PShape figure1, figure2;
+
+int scene = 1;
 
 int shoulderX = 50;
 int shoulderY = 50;
@@ -56,7 +58,7 @@ void setup()
   //------------radio buttons-----------------
   cp5 = new ControlP5(this);
   // scene
-  scene = cp5.addRadioButton("scene")
+  sceneButton = cp5.addRadioButton("sceneButton")
     .setPosition(300, 50)
     .setSize(20, 20)
     .setColorForeground(color(120))
@@ -69,7 +71,7 @@ void setup()
     .addItem("scene 3", 3)
     ;
 
-  for (Toggle t : scene.getItems()) {
+  for (Toggle t : sceneButton.getItems()) {
     t.getCaptionLabel().setColorBackground(color(255, 80));
     t.getCaptionLabel().getStyle().moveMargin(-7, 0, 0, -3);
     t.getCaptionLabel().getStyle().movePadding(7, 0, 0, 3);
@@ -166,19 +168,10 @@ void draw() {
 // controlEvent
 //--------------------------------------------------------
 void controlEvent(ControlEvent theEvent) {
-  if (theEvent.isFrom(scene)) {
+  if (theEvent.isFrom(sceneButton)) {
     println("got an event from "+theEvent.getName()+": " + (int)theEvent.getValue() + " ");
-    switch ((int)theEvent.getValue()) {
-    case 1:
-      myChimes.setScene(1);
-      break;
-    case 2:
-      myChimes.setScene(2);
-      break;
-    case 3:
-      myChimes.setScene(3);
-      break;
-    }
+    scene = (int)theEvent.getValue();
+    myChimes.setScene(scene);
   }
 }
 
@@ -186,18 +179,43 @@ void controlEvent(ControlEvent theEvent) {
 // messageReceived
 //--------------------------------------------------------
 void messageReceived(String topic, byte[] payload) {
-  println("new message: " + topic + " - " + new String(payload));
+  String m = new String(payload);
+  println("new message: " + topic + " - " + m);
 
   // phoebe shoulder touched
   if (topic.equals(subscribePhoebeShoulder)) {
     println("phoebe shoulder sensor triggered");
     shoulderTouched = true;
     shoulderTime = millis();
-    myChimes.playChime(1);
 
-    // trigger the hip
-    myClient.publish(publishTaraShoulder, "from the shoulder");
-    println("tara shoulder actuator triggered hip");
+    if (scene !=2) {
+      myChimes.playChime(0);
+
+      switch (Integer.parseInt(m)) {
+      case 0:
+        myChimes.playChime(1);
+        break;
+      case 2:
+        myChimes.playChime(2);
+        break;
+      case 6:
+        myChimes.playChime(3);
+        break;
+      case 7:
+        myChimes.playChime(4);
+        break;
+      case 8:
+        myChimes.playChime(5);
+        break;
+      case 9:
+        myChimes.playChime(5);
+        break;
+      }
+
+      // trigger the hip
+      myClient.publish(publishTaraShoulder, "from the shoulder");
+      println("tara shoulder actuator triggered hip");
+    }
   }
 
   // tara shoulder touched
@@ -205,11 +223,35 @@ void messageReceived(String topic, byte[] payload) {
     hipTouched = true;
     hipTime = millis();
     println("tara shoulder sensor triggered");
-    myChimes.playChime(5);
 
-    // trigger the shoulder
-    myClient.publish(publishPhoebeShoulder, "from hip");
-    println("phoebe shoulder actuator triggered");
+    if (scene !=2) {
+      myChimes.playChime(6);
+
+      switch (Integer.parseInt(m)) {
+      case 0:
+        myChimes.playChime(7);
+        break;
+      case 1:
+        myChimes.playChime(8);
+        break;
+      case 3:
+        myChimes.playChime(9);
+        break;
+      case 5:
+        myChimes.playChime(10);
+        break;
+      case 9:
+        myChimes.playChime(11);
+        break;
+      case 11:
+        myChimes.playChime(11);
+        break;
+      }
+
+      // trigger the shoulder
+      myClient.publish(publishPhoebeShoulder, "from hip");
+      println("phoebe shoulder actuator triggered");
+    }
   }
 }
 
@@ -231,10 +273,12 @@ void updateTouchedFlags() {
 void keyPressed() {
   switch (key) {
   case 'Q':
+    myChimes.playChime(6);
     myClient.publish(publishTaraShoulder, "from the shoulder");
     break;
 
   case 'P':
+    myChimes.playChime(0);
     myClient.publish(publishPhoebeShoulder, "from hip");
     break;
 
