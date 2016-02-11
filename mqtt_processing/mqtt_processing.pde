@@ -195,19 +195,19 @@ void messageReceived(String topic, byte[] payload) {
       case 0:
         myChimes.playChime(1);
         break;
-      case 2:
+      case 1:
+        myChimes.playChime(1);
+        break;
+      case 3:
         myChimes.playChime(2);
         break;
-      case 6:
+      case 5:
         myChimes.playChime(3);
         break;
-      case 7:
+      case 9:
         myChimes.playChime(4);
         break;
-      case 8:
-        myChimes.playChime(5);
-        break;
-      case 9:
+      case 10:
         myChimes.playChime(5);
         break;
       }
