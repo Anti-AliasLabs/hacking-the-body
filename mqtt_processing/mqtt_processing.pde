@@ -14,6 +14,7 @@ Minim minim;
 // variables for MQTT
 String broker   = "tcp://localhost:1883";
 String publishTaraShoulder    = "/htb/actuator/tara/shoulder/";
+//String publishTaraShoulder    = "/inTopic/";
 String publishPhoebeShoulder    = "/htb/actuator/phoebe/shoulder/";
 String subscribeTaraShoulder    = "/htb/sensor/tara/shoulder/";
 String subscribePhoebeShoulder    = "/htb/sensor/phoebe/shoulder/";
@@ -181,7 +182,8 @@ void controlEvent(ControlEvent theEvent) {
 void messageReceived(String topic, byte[] payload) {
   String m = new String(payload);
   println("new message: " + topic + " - " + m);
-
+  
+  /*
   // phoebe shoulder touched
   if (topic.equals(subscribePhoebeShoulder)) {
     println("phoebe shoulder sensor triggered");
@@ -252,7 +254,7 @@ void messageReceived(String topic, byte[] payload) {
       myClient.publish(publishPhoebeShoulder, "from hip");
       println("phoebe shoulder actuator triggered");
     }
-  }
+  }*/
 }
 
 //--------------------------------------------------------
@@ -274,12 +276,12 @@ void keyPressed() {
   switch (key) {
   case 'Q':
     myChimes.playChime(6);
-    myClient.publish(publishTaraShoulder, "from the shoulder");
+    myClient.publish(publishTaraShoulder, "from Phoebe");
     break;
 
   case 'P':
     myChimes.playChime(0);
-    myClient.publish(publishPhoebeShoulder, "from hip");
+    myClient.publish(publishPhoebeShoulder, "from Tara");
     break;
 
     // dancer 1

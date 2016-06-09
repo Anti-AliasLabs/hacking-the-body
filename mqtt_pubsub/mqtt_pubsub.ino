@@ -17,11 +17,11 @@
 /************************* WiFi Access Point *********************************/
 const char* ssid = "AWR-7200";
 const char* password = "";
-const char* mqtt_server = "192.168.1.2";
+const char* mqtt_server = "192.168.1.3";
 
 
 /****************************** Feeds ***************************************/
-#define SENSOR_FEED     "/htb/sensor/tara/shoulder"
+#define SENSOR_FEED     "/htb/sensor/tara/shoulder/"
 #define ACTUATOR_FEED   "/htb/actuator/tara/shoulder/"
 
 
@@ -74,17 +74,16 @@ void loop() {
   client.loop();
 
   // initial testing
-  /*long now = millis();
-  if (now - lastMsg > 2000) {
+  long now = millis();
+  if (now - lastMsg > 500) {
     lastMsg = now;
     ++value;
-    snprintf (msg, 75, "hello world #%ld", value);
-    Serial.print("Publish message: ");
-    Serial.println(msg);
-    client.publish("outTopic", msg);
-  }*/
-
-  //readTouchInputs();
+    //snprintf (msg, 75, "hello world #%ld", value);
+    //Serial.print("Publish message: ");
+    //Serial.println(msg);
+    //client.publish(SENSOR_FEED, msg);
+    readTouchInputs();
+  }
 }
 
 /*************************** Set up wifi ************************************/
@@ -107,7 +106,7 @@ void setup_wifi() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-  client.subscribe("inTopic");
+  client.subscribe(ACTUATOR_FEED);
 }
 
 /*************************** Reconnect to wifi ************************************/
@@ -119,9 +118,9 @@ void reconnect() {
     if (client.connect("ESP8266Client")) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      client.publish("outTopic", "hello world");
+      client.publish(SENSOR_FEED, "hello world");
       // ... and resubscribe
-      client.subscribe("inTopic");
+      client.subscribe(ACTUATOR_FEED);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -146,7 +145,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   if ((char)payload[0] == '1') {
     digitalWrite(BUILTIN_LED, LOW);   // Turn the LED on (Note that LOW is the voltage level
     // but actually the LED is on; this is because
-    // it is acive low on the ESP-01)
+    // it is active low on the ESP-01)
   } else {
     digitalWrite(BUILTIN_LED, HIGH);  // Turn the LED off by making the voltage HIGH
   }
@@ -185,7 +184,7 @@ void readTouchInputs() {
             snprintf(s, 4,  "%d", i);
             client.publish(SENSOR_FEED, s);
             // ... and resubscribe
-            client.subscribe("inTopic");
+            //client.subscribe(ACTUATOR_FEED);
           } else {
             Serial.print("failed, rc=");
             Serial.print(client.state());
