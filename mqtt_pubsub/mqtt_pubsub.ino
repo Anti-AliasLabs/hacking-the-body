@@ -17,12 +17,12 @@
 /************************* WiFi Access Point *********************************/
 const char* ssid = "AWR-7200";
 const char* password = "";
-const char* mqtt_server = "192.168.1.3";
+const char* mqtt_server = "192.168.1.2";
 
 
 /****************************** Feeds ***************************************/
-#define SENSOR_FEED     "/htb/sensor/tara/shoulder/"
-#define ACTUATOR_FEED   "/htb/actuator/tara/shoulder/"
+#define SENSOR_FEED     "/htb/sensor/rightshoulder/"
+#define ACTUATOR_FEED   "/htb/actuator/rightshoulder/"
 
 
 /*************************** Cap Sensing ************************************/
@@ -115,7 +115,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("ESP8266Client")) {
+    if (client.connect("ESP8266ClientRight")) {
       Serial.println("connected");
       // Once connected, publish an announcement...
       client.publish(SENSOR_FEED, "hello world");
@@ -140,6 +140,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print((char)payload[i]);
   }
   Serial.println();
+
+  // activate motor
+  triggerMotor();
+  //Serial.println("motor triggered");
 
   // Switch on the LED if an 1 was received as first character
   if ((char)payload[0] == '1') {
@@ -175,9 +179,6 @@ void readTouchInputs() {
           Serial.println(" was just touched");
           touchStates[i] = 1;
 
-          // activate motor
-          //triggerMotor();
-          //Serial.println("motor triggered");
           if (client.connect("ESP8266Client")) {
             // Once connected, publish an announcement...
             char s[4];
