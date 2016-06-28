@@ -13,11 +13,11 @@ Minim minim;
 
 // variables for MQTT
 String broker   = "tcp://localhost:1883";
-String publishTaraShoulder    = "/htb/actuator/tara/shoulder/";
-//String publishTaraShoulder    = "/inTopic/";
-String publishPhoebeShoulder    = "/htb/actuator/phoebe/shoulder/";
-String subscribeTaraShoulder    = "/htb/sensor/tara/shoulder/";
-String subscribePhoebeShoulder    = "/htb/sensor/phoebe/shoulder/";
+String publishLeftShoulder    = "/htb/actuator/leftshoulder/";
+//String publishLeftShoulder    = "/inTopic/";
+String publishRightShoulder    = "/htb/actuator/rightshoulder/";
+String subscribeLeftShoulder    = "/htb/sensor/leftshoulder/";
+String subscribeRightShoulder    = "/htb/sensor/rightshoulder/";
 
 // GUI variables
 PFont font;
@@ -89,8 +89,8 @@ void setup()
   myClient.connect(broker, "processing");
 
   // subscribe to feeds
-  myClient.subscribe(subscribeTaraShoulder);
-  myClient.subscribe(subscribePhoebeShoulder);
+  myClient.subscribe(subscribeLeftShoulder);
+  myClient.subscribe(subscribeRightShoulder);
 }
 
 //--------------------------------------------------------
@@ -104,7 +104,7 @@ void draw() {
   rect(0, 120, width*.45, 400);
   shape(figure1, 100, 65, figure1.width*1.25, figure1.height*1.25);
   fill(#BEEE62);
-  text("Tara", width*0.45-80, 510);
+  text("Left", width*0.45-80, 510);
 
   text("Q", width*0.17, 150); //tickle trigger
 
@@ -121,7 +121,7 @@ void draw() {
   rect(width*.55, 120, width*.45, 400);
   shape(figure2, width-figure2.width-135, 65, figure2.width*1.25, figure2.height*1.25);
   fill(#BEEE62);
-  text("Phoebe", width*0.55+10, 510);
+  text("Right", width*0.55+10, 510);
   text("P", width*0.80, 150); // tickle trigger
 
   text("l", width*0.69, 170); // chime triggers
@@ -182,28 +182,35 @@ void controlEvent(ControlEvent theEvent) {
 void messageReceived(String topic, byte[] payload) {
   String m = new String(payload);
   println("new message: " + topic + " - " + m);
-  
-  /*
-  // phoebe shoulder touched
-  if (topic.equals(subscribePhoebeShoulder)) {
-    println("phoebe shoulder sensor triggered");
+
+  int sensorNumber;
+  try {
+    sensorNumber = Integer.parseInt(m);
+  } 
+  catch (NumberFormatException e) {
+    // not an int
+    sensorNumber = -1;
+  }
+  // Right shoulder touched
+  if (topic.equals(subscribeRightShoulder)) {
+    println("Right shoulder sensor triggered");
     shoulderTouched = true;
     shoulderTime = millis();
 
     if (scene !=2) {
       myChimes.playChime(0);
 
-      switch (Integer.parseInt(m)) {
+      switch (sensorNumber) {
       case 0:
         myChimes.playChime(1);
         break;
-      case 1:
+      case 3:
         myChimes.playChime(1);
         break;
-      case 3:
+      case 5:
         myChimes.playChime(2);
         break;
-      case 5:
+      case 7:
         myChimes.playChime(3);
         break;
       case 9:
@@ -212,24 +219,27 @@ void messageReceived(String topic, byte[] payload) {
       case 10:
         myChimes.playChime(5);
         break;
+      case 11:
+        myChimes.playChime(5);
+        break;
       }
 
       // trigger the hip
-      myClient.publish(publishTaraShoulder, "from the shoulder");
-      println("tara shoulder actuator triggered hip");
+      myClient.publish(publishLeftShoulder, "from the shoulder");
+      println("Left shoulder actuator triggered hip");
     }
   }
 
-  // tara shoulder touched
-  if (topic.equals(subscribeTaraShoulder)) {
+  // Left shoulder touched
+  if (topic.equals(subscribeLeftShoulder)) {
     hipTouched = true;
     hipTime = millis();
-    println("tara shoulder sensor triggered");
+    println("Left shoulder sensor triggered");
 
     if (scene !=2) {
       myChimes.playChime(6);
 
-      switch (Integer.parseInt(m)) {
+      switch (sensorNumber) {
       case 0:
         myChimes.playChime(7);
         break;
@@ -242,6 +252,9 @@ void messageReceived(String topic, byte[] payload) {
       case 5:
         myChimes.playChime(10);
         break;
+      case 7:
+        myChimes.playChime(10);
+        break;
       case 9:
         myChimes.playChime(11);
         break;
@@ -251,11 +264,12 @@ void messageReceived(String topic, byte[] payload) {
       }
 
       // trigger the shoulder
-      myClient.publish(publishPhoebeShoulder, "from hip");
-      println("phoebe shoulder actuator triggered");
+      myClient.publish(publishRightShoulder, "from hip");
+      println("Right shoulder actuator triggered");
     }
-  }*/
+  }
 }
+
 
 //--------------------------------------------------------
 // updateTouchedFlags
@@ -276,12 +290,12 @@ void keyPressed() {
   switch (key) {
   case 'Q':
     myChimes.playChime(6);
-    myClient.publish(publishTaraShoulder, "from Phoebe");
+    myClient.publish(publishLeftShoulder, "from Right");
     break;
 
   case 'P':
     myChimes.playChime(0);
-    myClient.publish(publishPhoebeShoulder, "from Tara");
+    myClient.publish(publishRightShoulder, "from Left");
     break;
 
     // dancer 1
