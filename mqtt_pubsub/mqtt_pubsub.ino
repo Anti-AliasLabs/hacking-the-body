@@ -21,8 +21,8 @@ const char* mqtt_server = "192.168.1.2";
 
 
 /****************************** Feeds ***************************************/
-#define SENSOR_FEED     "/htb/sensor/rightshoulder/"
-#define ACTUATOR_FEED   "/htb/actuator/rightshoulder/"
+#define SENSOR_FEED     "/htb/sensor/leftshoulder/"
+#define ACTUATOR_FEED   "/htb/actuator/leftshoulder/"
 
 
 /*************************** Cap Sensing ************************************/
@@ -115,7 +115,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("ESP8266ClientRight")) {
+    if (client.connect("ESP8266ClientLeft")) {
       Serial.println("connected");
       // Once connected, publish an announcement...
       client.publish(SENSOR_FEED, "hello world");
